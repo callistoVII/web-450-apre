@@ -31,48 +31,55 @@ export const userManagementRoutes: Routes = [
   {
     path: '',
     redirectTo: 'users',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'users',
-    component: UsersComponent
+    component: UsersComponent,
   },
   {
     path: 'users/new',
-    component: UserCreateComponent
+    component: UserCreateComponent,
   },
   {
     path: 'users/:id',
-    component: UserDetailsComponent
-  }
-]
+    component: UserDetailsComponent,
+  },
+];
 
 // Sales reports routes
 export const salesReportRoutes: Routes = [
   {
     path: 'sales-by-region',
-    component: SalesByRegionComponent
+    component: SalesByRegionComponent,
   },
   {
     path: 'sales-by-region-tabular',
-    component: SalesByRegionTabularComponent
-  }
+    component: SalesByRegionTabularComponent,
+  },
+  {
+    path: 'sales-summary', // Added sales-summary route for Major Task
+    loadComponent: () =>
+      import('./reports/sales/sales-summary/sales-summary.component').then(
+        (m) => m.SalesSummaryComponent,
+      ),
+  },
 ];
 
 // Agent performance routes
 export const agentPerformanceRoutes: Routes = [
   {
     path: 'call-duration-by-date-range',
-    component: CallDurationByDateRangeComponent
-  }
+    component: CallDurationByDateRangeComponent,
+  },
 ];
 
 // Customer feedback routes
 export const customerFeedbackRoutes: Routes = [
   {
     path: 'channel-rating-by-month',
-    component: ChannelRatingByMonthComponent
-  }
+    component: ChannelRatingByMonthComponent,
+  },
 ];
 
 // Export the routes
@@ -83,45 +90,45 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: DashboardComponent
+        component: DashboardComponent,
       },
       {
         path: 'demo',
-        component: DemoComponent
+        component: DemoComponent,
       },
       {
         path: 'support',
-        component: SupportComponent
+        component: SupportComponent,
       },
       {
         path: 'faq',
-        component: FaqComponent
+        component: FaqComponent,
       },
       {
         path: 'user-management',
         component: UserManagementComponent,
-        children: userManagementRoutes
+        children: userManagementRoutes,
       },
       {
         path: 'reports/sales',
         component: SalesComponent,
-        children: salesReportRoutes
+        children: salesReportRoutes,
       },
       {
         path: 'reports/agent-performance',
         component: AgentPerformanceComponent,
-        children: agentPerformanceRoutes
+        children: agentPerformanceRoutes,
       },
       {
         path: 'reports/customer-feedback',
         component: CustomerFeedbackComponent,
-        children: customerFeedbackRoutes
-      }
+        children: customerFeedbackRoutes,
+      },
     ],
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'signin',
-    component: SigninComponent
-  }
+    component: SigninComponent,
+  },
 ];
