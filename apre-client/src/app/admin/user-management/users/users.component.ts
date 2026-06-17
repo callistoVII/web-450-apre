@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { User } from '../user.interface';
 import { RouterLink } from '@angular/router';
-import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-dialog.component";
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -12,7 +12,12 @@ import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-d
   template: `
     <div>
       <h1>Users</h1>
-      <a routerLink="/user-management/users/new" class="link button button--primary">Create User</a><br /><br />
+      <!-- Updated button text from 'Create User' to 'Add New User' to improve clarity and align with common UI conventions -->
+      <a
+        routerLink="/user-management/users/new"
+        class="link button button--primary"
+        >Add New User</a
+      ><br /><br />
 
       @if (deletionMessage) {
         <div class="message message--success">{{ deletionMessage }}</div>
@@ -25,15 +30,16 @@ import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-d
           <th>Functions</th>
         </thead>
         <tbody>
-          @for(user of users; track user) {
+          @for (user of users; track user) {
             <tr>
               <td>{{ user.username }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.role }}</td>
               <td>
-                <a routerLink="/user-management/users/{{ user._id}}">
+                <a routerLink="/user-management/users/{{ user._id }}">
                   <i class="fas fa-edit"></i>
-                </a> &nbsp;
+                </a>
+                &nbsp;
                 <a (click)="confirmDelete(user._id)">
                   <i class="fas fa-trash"></i>
                 </a>
@@ -44,11 +50,14 @@ import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-d
       </table>
     </div>
     @if (showConfirmDialog) {
-      <app-confirm-dialog [header]="dialogHeader" [message]="dialogMessage" (confirmed)="onConfirm($event)"></app-confirm-dialog>
+      <app-confirm-dialog
+        [header]="dialogHeader"
+        [message]="dialogMessage"
+        (confirmed)="onConfirm($event)"
+      ></app-confirm-dialog>
     }
   `,
-  styles: `
-  `
+  styles: ``,
 })
 export class UsersComponent {
   dialogHeader: string;
@@ -68,13 +77,14 @@ export class UsersComponent {
       next: (users) => {
         this.users = users as Array<User>;
         console.log(users);
-      }
+      },
     });
   }
 
   confirmDelete(userId: string) {
     this.dialogHeader = 'Confirm Deletion';
-    this.dialogMessage = 'Are you sure you want to delete user: ' + userId + '?';
+    this.dialogMessage =
+      'Are you sure you want to delete user: ' + userId + '?';
     this.userIdToDelete = userId;
     this.showConfirmDialog = true;
   }
@@ -98,7 +108,7 @@ export class UsersComponent {
         setTimeout(() => {
           this.deletionMessage = '';
         }, 2000);
-      }
+      },
     });
   }
 }
