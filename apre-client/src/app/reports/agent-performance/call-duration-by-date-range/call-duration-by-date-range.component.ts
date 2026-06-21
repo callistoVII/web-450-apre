@@ -16,16 +16,27 @@ import { environment } from '../../../../environments/environment';
       <div class="calendar-form">
         <div class="calendar-form__group">
           <div class="calendar-form__item">
-            <label class="calendar-form__label" for="startDate">Start Date:</label>
-            <app-calendar (dateSelected)="onStartDateSelected($event)"></app-calendar>
+            <label class="calendar-form__label" for="startDate"
+              >Start Date:</label
+            >
+            <app-calendar
+              (dateSelected)="onStartDateSelected($event)"
+            ></app-calendar>
           </div>
           <div class="calendar-form__item">
             <label class="calendar-form__label" for="endDate">End Date:</label>
-            <app-calendar (dateSelected)="onEndDateSelected($event)"></app-calendar>
+            <app-calendar
+              (dateSelected)="onEndDateSelected($event)"
+            ></app-calendar>
           </div>
         </div>
         <div class="calendar-form__actions">
-          <button class="button button--primary" (click)="fetchPerformanceData()">Submit</button>
+          <button
+            class="button button--primary"
+            (click)="fetchPerformanceData()"
+          >
+            Submit
+          </button>
         </div>
       </div>
 
@@ -36,9 +47,14 @@ import { environment } from '../../../../environments/environment';
             [type]="'bar'"
             [label]="'Agent Performance'"
             [data]="callDurationData"
-            [labels]="agents">
+            [labels]="agents"
+          >
           </app-chart>
         </div>
+      </div>
+      <div *ngIf="noData" class="no-data-message">
+        <!-- No-data state: shown when the API returns an empty array to inform the user that no results matched the selected dates -->
+        No data found for the selected date range.
       </div>
     </div>
   `,
@@ -82,7 +98,14 @@ import { environment } from '../../../../environments/environment';
       width: 100%;
       margin: 20px 0;
     }
-  `
+
+    .no-data-message {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #555;
+    }
+  `,
 })
 export class CallDurationByDateRangeComponent {
   startDate: Date | null = null;
@@ -90,10 +113,9 @@ export class CallDurationByDateRangeComponent {
   callDurationData: number[] = []; // Initially empty
   agents: string[] = []; // Initially empty
   showChart: boolean = false; // Initially hidden
+  noData: boolean = false; // Added to inform user when no data is found for date range selected
 
-  constructor(private http: HttpClient) {
-
-  }
+  constructor(private http: HttpClient) {}
 
   onStartDateSelected(date: Date) {
     this.startDate = date;
@@ -112,28 +134,39 @@ export class CallDurationByDateRangeComponent {
 
   fetchPerformanceData() {
     if (this.startDate && this.endDate) {
-
       // Convert the dates to ISO 8601 strings
       const startDateISO = this.startDate.toISOString();
       const endDateISO = this.endDate.toISOString();
 
-      console.log('Fetching performance data for dates:', startDateISO, endDateISO);
+      console.log(
+        'Fetching performance data for dates:',
+        startDateISO,
+        endDateISO,
+      );
 
-      this.http.get(`${environment.apiBaseUrl}/reports/agent-performance/call-duration-by-date-range?startDate=${startDateISO}&endDate=${endDateISO}`).subscribe({
-        next: (data: any) => {
-          this.callDurationData = data[0].callDurations;
-          this.agents = data[0].agents;
-          console.log(data[0]);
-          console.log('Agents: ', data[0].agents);
-          console.log('Call durations: ', data[0].callDurations);
-        },
-        error: (error: any) => {
-          console.error('Error fetching call duration by date range data:', error);
-        },
-        complete: () => {
-          this.showChart = true; // Show chart after fetching data
-        }
-      });
+      this.http
+        .get(
+          `${environment.apiBaseUrl}/reports/agent-performance/call-duration-by-date-range?startDate=${startDateISO}&endDate=${endDateISO}`,
+        )
+        .subscribe({
+          // Updated: If the API returns no records for selected date range, keep chart hidden and notify user when no data is available.
+          next: (data: any) => {
+            if (!data || data.length === 0) {
+              this.noData = true;
+              this.showChart = false;
+              return;
+            }
+
+            this.noData = false;
+            this.callDurationData = data[0].callDurations;
+            this.agents = data[0].agents;
+          },
+          complete: () => {
+            if (!this.noData) {
+              this.showChart = true;
+            }
+          },
+        });
     } else {
       alert('Please select both start and end dates.');
     }
