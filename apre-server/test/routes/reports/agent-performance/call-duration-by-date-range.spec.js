@@ -1,29 +1,32 @@
 /**
- * Author: Niki Nielsen
- * Date: 06/21/2026
+ * Author: Nicole Nielsen
+ * Date: 06/28/2026
  * File: call-duration-by-date-range.spec.js
- * Description:
- * Unit tests for the Sprint 2 Major Task
- * Tests verify -
- * 1 - missing query parameters return a 400 error
- * 2 - valid query parameters return a 200 response
- * 3 - the response structure matches the expected APRE report format
+ * Description: Server-side unit tests for the Call Duration By Date Range API.
+ * These tests verify:
+ * 1) Required query parameters are enforced
+ * 2) Valid requests return a 200 response
+ * 3) API responses include expected fields and data structures
  */
-
-"use strict";
 
 const request = require("supertest");
 const app = require("../../../../src/app");
+const { mongo } = require("../../../../src/utils/mongo");
 
-describe("GET /reports/agent-performance/call-duration-by-date-range", () => {
+jest.mock("../../../../src/utils/mongo");
+
+describe("GET /api/reports/agent-performance/call-duration-by-date-range", () => {
+  beforeEach(() => {
+    mongo.mockClear();
+  });
+
   /**
    * Test 1:
-   * Ensures the API returns a 400 Bad Request when either
-   * startDate or endDate is missing.
+   * Ensures the API returns 400 when either startDate or endDate is missing.
    */
   it("should return 400 when startDate or endDate is missing", async () => {
     const res = await request(app).get(
-      "/reports/agent-performance/call-duration-by-date-range?startDate=2024-08-07",
+      "/api/reports/agent-performance/call-duration-by-date-range?startDate=2024-08-07",
     );
 
     expect(res.status).toBe(400);
@@ -32,12 +35,21 @@ describe("GET /reports/agent-performance/call-duration-by-date-range", () => {
 
   /**
    * Test 2:
-   * Ensures the API returns a 200 OK response when both
-   * startDate and endDate are provided.
+   * Ensures the API returns 200 for valid date range requests.
    */
   it("should return 200 when both startDate and endDate are provided", async () => {
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([]),
+        }),
+      };
+      await callback(db);
+    });
+
     const res = await request(app).get(
-      "/reports/agent-performance/call-duration-by-date-range?startDate=2024-08-07&endDate=2024-08-07",
+      "/api/reports/agent-performance/call-duration-by-date-range?startDate=2024-08-07&endDate=2024-08-07",
     );
 
     expect(res.status).toBe(200);
@@ -45,12 +57,26 @@ describe("GET /reports/agent-performance/call-duration-by-date-range", () => {
 
   /**
    * Test 3:
-   * Ensures the response body contains the expected structure:
-   * an array with objects containing `agents` and `callDurations`.
+   * Ensures the API response includes agents and callDurations arrays.
    */
   it("should return a response with agents and callDurations arrays", async () => {
+    mongo.mockImplementation(async (callback) => {
+      const db = {
+        collection: jest.fn().mockReturnThis(),
+        aggregate: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([
+            {
+              agents: ["Agent A", "Agent B"],
+              callDurations: [120, 150],
+            },
+          ]),
+        }),
+      };
+      await callback(db);
+    });
+
     const res = await request(app).get(
-      "/reports/agent-performance/call-duration-by-date-range?startDate=2024-08-07&endDate=2024-08-08",
+      "/api/reports/agent-performance/call-duration-by-date-range?startDate=2024-08-07&endDate=2024-08-08",
     );
 
     expect(Array.isArray(res.body)).toBe(true);

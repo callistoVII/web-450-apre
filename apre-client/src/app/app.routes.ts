@@ -58,7 +58,7 @@ export const salesReportRoutes: Routes = [
     component: SalesByRegionTabularComponent,
   },
   {
-    path: 'sales-summary', // Added sales-summary route for Major Task
+    path: 'summary',
     loadComponent: () =>
       import('./reports/sales/sales-summary/sales-summary.component').then(
         (m) => m.SalesSummaryComponent,
@@ -79,6 +79,13 @@ export const customerFeedbackRoutes: Routes = [
   {
     path: 'channel-rating-by-month',
     component: ChannelRatingByMonthComponent,
+  },
+  {
+    path: 'by-region',
+    loadComponent: () =>
+      import('./reports/customer-feedback/by-region/customer-feedback-by-region.component').then(
+        (m) => m.CustomerFeedbackByRegionComponent,
+      ),
   },
 ];
 

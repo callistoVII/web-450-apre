@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
+    <!-- Sales Summary Report -->
     <h2>Sales Summary Report</h2>
 
     <div class="summary-grid" *ngIf="data.length > 0">
@@ -26,29 +27,7 @@ import { CommonModule } from '@angular/common';
 
     <p *ngIf="data.length === 0">No sales summary data available.</p>
   `,
-  styles: [
-    `
-      .summary-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      .summary-card {
-        padding: 1rem;
-        border-radius: 8px;
-        background: #f9f9fa;
-        border: 1px solid #ddd;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      }
-
-      .summary-card h3 {
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class SalesSummaryComponent implements OnInit {
   data: any[] = [];
@@ -59,9 +38,12 @@ export class SalesSummaryComponent implements OnInit {
 
   async loadSalesSummary(): Promise<void> {
     try {
+      // Fetch the sales summary report
       const response = await fetch(
-        'http://localhost:3000/api/reports/sales-summary',
+        'http://localhost:3000/api/reports/sales/summary',
       );
+
+      // Assign the returned data to the component
       this.data = await response.json();
     } catch (error) {
       console.error('Error loading sales summary:', error);

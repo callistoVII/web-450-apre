@@ -5,6 +5,47 @@ It includes documentation, feature development, and unit testing for enhancement
 
 ---
 
+## Week 4 Major Task: Customer Feedback by Region (M-107)
+
+This week's Major Task adds a new Customer Feedback report that displays feedback scores by region using a chart or table.
+
+### Backend API
+
+- **Route:**  
+  `GET /api/reports/customer-feedback/by-region`
+
+- **Behavior:**  
+  Accepts no parameters and returns aggregated customer feedback data grouped by region.  
+  Each record includes:
+  - `region`
+  - `averageRating`
+  - `totalResponses`
+
+- **Tests:**  
+  Three Jest tests covering:
+  1. Valid request returns a 200 response  
+  2. Response includes the expected fields  
+  3. Response structure matches the expected array format  
+
+  ### Frontend Component
+
+- **Component:** `CustomerFeedbackByRegionComponent` (using `ChartComponent` or `TableComponent`)
+- **Behavior:**  
+  Calls the backend API, maps the response into chart/table data, and displays feedback by region.  
+  Handles empty data gracefully with a clear message.
+
+- **Unit tests:**  
+  Three Angular tests covering:
+  1. Component creation  
+  2. API call and data mapping  
+  3. Rendering behavior for empty and populated data sets  
+
+  **To view report in running application:**
+  http://localhost:4200/reports/customer-feedback/by-region
+  
+
+---
+
 ## Week 3 Major Task: Call Duration by Date Range Report
 
 This week's Major Task adds a new Agent Performance report that returns total call duration for all agents within a selected date range.

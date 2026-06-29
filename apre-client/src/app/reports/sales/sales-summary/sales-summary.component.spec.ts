@@ -40,7 +40,7 @@ describe('SalesSummaryComponent', () => {
     await component.loadSalesSummary();
 
     expect(window.fetch).toHaveBeenCalledWith(
-      'http://localhost:3000/api/reports/sales-summary',
+      'http://localhost:3000/api/reports/sales/summary',
     );
     expect(component.data).toEqual(mockData);
   });
